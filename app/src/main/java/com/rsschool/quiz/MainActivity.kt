@@ -2,6 +2,8 @@ package com.rsschool.quiz
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
+import android.os.PersistableBundle
 import com.rsschool.quiz.databinding.ActivityMainBinding
 import java.util.*
 
@@ -32,16 +34,21 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null)
+            quest_counter = savedInstanceState.getInt("quest_count")
+        else
+            quest_counter = 0
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 
     override fun onStart() {
         super.onStart()
-        quest_counter = 0
-        fragments.clear()
         setUpQuizContent()
-        openQuiz(0)
+        if (quest_counter == -1)
+            openResultFragment()
+        else
+            openQuiz(quest_counter)
     }
 
     private fun setUpQuizContent() {
@@ -97,6 +104,16 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
         super.onBackPressed()
     }
 
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState.putInt("quest_count", quest_counter)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        quest_counter = savedInstanceState.getInt("quest_count")
+    }
+
     override fun onNext() {
         quest_counter++
         openQuiz(quest_counter)
@@ -108,9 +125,12 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
 
     override fun onSubmit() {
         openResultFragment()
+        quest_counter = -1
     }
 
     override fun onRestartClicked() {
+        fragments.clear()
+        quest_counter = 0
         onStart()
     }
 
