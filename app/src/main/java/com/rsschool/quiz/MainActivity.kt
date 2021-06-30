@@ -34,12 +34,16 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (savedInstanceState != null)
-            quest_counter = savedInstanceState.getInt("quest_count")
-        else
-            quest_counter = 0
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        if (savedInstanceState != null) {
+            quest_counter = savedInstanceState.getInt("quest_count")
+            checkFirst = savedInstanceState.getBoolean("is_first")
+            checkLast = savedInstanceState.getBoolean("is_last")
+        }
+        else{
+            quest_counter = 0
+        }
     }
 
     override fun onStart() {
@@ -53,8 +57,8 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
 
     private fun setUpQuizContent() {
         for(ind in 0..4){
-            var checkFirst = false
-            var checkLast = false
+            checkFirst = false
+            checkLast = false
             if(ind == 0){ checkFirst = true }
             else if(ind == 4){ checkLast = true }
             val quizItem = QuizItem(
@@ -96,6 +100,10 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
 
     companion object {
         private var quest_counter = 0
+
+        private var checkFirst = false
+        private var checkLast = false
+
         private val fragments = ArrayList<QuizFragment>()
     }
 
@@ -107,6 +115,8 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         super.onSaveInstanceState(outState, outPersistentState)
         outState.putInt("quest_count", quest_counter)
+        outState.putBoolean("is_first", checkFirst)
+        outState.putBoolean("is_last", checkLast)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -131,6 +141,8 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
     override fun onRestartClicked() {
         fragments.clear()
         quest_counter = 0
+        checkFirst = false
+        checkLast = false
         onStart()
     }
 
