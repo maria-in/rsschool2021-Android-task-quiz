@@ -57,10 +57,9 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
 
     private fun setUpQuizContent() {
         for(ind in 0..4){
-            checkFirst = false
-            checkLast = false
             if(ind == 0){ checkFirst = true }
             else if(ind == 4){ checkLast = true }
+            else checkFirst = false
             val quizItem = QuizItem(
                     titles[ind],
                     questions[ind],
@@ -122,6 +121,8 @@ class MainActivity : AppCompatActivity(), QuizCommunication {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         quest_counter = savedInstanceState.getInt("quest_count")
+        checkFirst = savedInstanceState.getBoolean("is_first")
+        checkLast = savedInstanceState.getBoolean("is_last")
     }
 
     override fun onNext() {
